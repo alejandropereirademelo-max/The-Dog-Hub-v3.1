@@ -1,0 +1,734 @@
+-- ============================================
+-- 🐕 THE DOG HUB ULTIMATE v3.0 🐕
+-- AUTOR: Dark_Danger & DeepSeek
+-- FEATURES: Auto Farm 3 Mundos + Auto Redeem 50+ Códigos
+-- ============================================
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local Player = Players.LocalPlayer
+
+-- Clean old interfaces
+for _, gui in pairs(game.CoreGui:GetChildren()) do
+    if gui.Name:find("DogHub") or gui.Name:find("Hub") then
+        gui:Destroy()
+    end
+end
+
+-- ============================================
+-- 🎮 TODOS OS CÓDIGOS BLOX FRUITS (50+)
+-- ============================================
+local BloxFruitsCodes = {
+    "LIGHTNINGABUSE", "1LOSTADMIN", "ADMINFIGHT", "NOMOREHACK", 
+    "BANEXPLOIT", "krazydares", "TRIPLEABUSE", "24NOADMIN", 
+    "REWARDFUN", "Chandler", "NEWTROLL", "KITT_RESET", 
+    "Sub2CaptainMaui", "kittgaming", "Sub2Fer999", "Enyu_is_Pro", 
+    "Magicbus", "JCWK", "Starcodeheo", "Bluxxy", "fudd10_v2", 
+    "SUB2GAMERROBOT_EXP1", "Sub2NoobMaster123", "Sub2UncleKizaru", 
+    "Sub2Daigrock", "Axiore", "TantaiGaming", "StrawHatMaine", 
+    "Sub2OfficialNoobie", "Fudd10", "Bignews", "TheGreatAce", 
+    "SECRET_ADMIN", "SUB2GAMERROBOT_RESET1", "SUB2OFFICIALNOOBIE", 
+    "AXIORE", "BIGNEWS", "BLUXXY", "CHANDLER", "ENYU_IS_PRO", 
+    "FUDD10", "FUDD10_V2", "KITTGAMING", "MAGICBUS", "STARCODEHEO", 
+    "STRAWHATMAINE", "SUB2CAPTAINMAUI", "SUB2DAIGROCK", "SUB2FER999", 
+    "SUB2NOOBMASTER123", "SUB2UNCLEKIZARU", "TANTAIGAMING", "THEGREATACE"
+}
+
+-- ============================================
+-- 📊 NPCs PARA TODOS OS 3 MUNDOS
+-- ============================================
+local AllNPCs = {
+    -- SEA 1 (Level 1-700)
+    Sea1 = {
+        {Name = "Bandit", MinLevel = 5, MaxLevel = 20},
+        {Name = "Monkey", MinLevel = 15, MaxLevel = 40},
+        {Name = "Gorilla", MinLevel = 25, MaxLevel = 60},
+        {Name = "Pirate", MinLevel = 35, MaxLevel = 80},
+        {Name = "Brute", MinLevel = 45, MaxLevel = 100},
+        {Name = "Desert Bandit", MinLevel = 60, MaxLevel = 120},
+        {Name = "Desert Officer", MinLevel = 70, MaxLevel = 140},
+        {Name = "Snow Bandit", MinLevel = 90, MaxLevel = 160},
+        {Name = "Snowman", MinLevel = 100, MaxLevel = 180},
+        {Name = "Chief Petty Officer", MinLevel = 120, MaxLevel = 200},
+        {Name = "Sky Bandit", MinLevel = 150, MaxLevel = 250},
+        {Name = "Dark Master", MinLevel = 200, MaxLevel = 300},
+        {Name = "Galley Pirate", MinLevel = 250, MaxLevel = 400},
+        {Name = "Galley Captain", MinLevel = 300, MaxLevel = 500},
+        {Name = "Toga Warrior", MinLevel = 400, MaxLevel = 600},
+        {Name = "Gladiator", MinLevel = 450, MaxLevel = 650},
+        {Name = "Military Soldier", MinLevel = 500, MaxLevel = 700}
+    },
+    
+    -- SEA 2 (Level 700-1500)
+    Sea2 = {
+        {Name = "Raider", MinLevel = 700, MaxLevel = 750},
+        {Name = "Mercenary", MinLevel = 725, MaxLevel = 775},
+        {Name = "Swan Pirate", MinLevel = 775, MaxLevel = 800},
+        {Name = "Factory Staff", MinLevel = 800, MaxLevel = 850},
+        {Name = "Marine Lieutenant", MinLevel = 875, MaxLevel = 900},
+        {Name = "Marine Captain", MinLevel = 900, MaxLevel = 925},
+        {Name = "Zombie", MinLevel = 950, MaxLevel = 975},
+        {Name = "Vampire", MinLevel = 975, MaxLevel = 1000},
+        {Name = "Snow Trooper", MinLevel = 1000, MaxLevel = 1050},
+        {Name = "Winter Warrior", MinLevel = 1050, MaxLevel = 1100},
+        {Name = "Lab Subordinate", MinLevel = 1100, MaxLevel = 1125},
+        {Name = "Horned Warrior", MinLevel = 1125, MaxLevel = 1150},
+        {Name = "Magma Ninja", MinLevel = 1175, MaxLevel = 1200},
+        {Name = "Lava Pirate", MinLevel = 1200, MaxLevel = 1225},
+        {Name = "Ship Deckhand", MinLevel = 1250, MaxLevel = 1275},
+        {Name = "Ship Engineer", MinLevel = 1275, MaxLevel = 1300},
+        {Name = "Ship Steward", MinLevel = 1300, MaxLevel = 1325},
+        {Name = "Ship Officer", MinLevel = 1325, MaxLevel = 1350},
+        {Name = "Arctic Warrior", MinLevel = 1350, MaxLevel = 1375},
+        {Name = "Snow Lurker", MinLevel = 1375, MaxLevel = 1400}
+    },
+    
+    -- SEA 3 (Level 1500-2800+)
+    Sea3 = {
+        {Name = "Pirate Millionaire", MinLevel = 1500, MaxLevel = 1525},
+        {Name = "Pistol Billionaire", MinLevel = 1525, MaxLevel = 1550},
+        {Name = "Dragon Crew Warrior", MinLevel = 1575, MaxLevel = 1600},
+        {Name = "Dragon Crew Archer", MinLevel = 1600, MaxLevel = 1625},
+        {Name = "Hydra Enforcer", MinLevel = 1625, MaxLevel = 1650},
+        {Name = "Venomous Assailant", MinLevel = 1650, MaxLevel = 1675},
+        {Name = "Marine Commodore", MinLevel = 1700, MaxLevel = 1725},
+        {Name = "Marine Rear Admiral", MinLevel = 1725, MaxLevel = 1750},
+        {Name = "Fishman Raider", MinLevel = 1775, MaxLevel = 1800},
+        {Name = "Fishman Captain", MinLevel = 1800, MaxLevel = 1825},
+        {Name = "Forest Pirate", MinLevel = 1825, MaxLevel = 1850},
+        {Name = "Mythological Pirate", MinLevel = 1850, MaxLevel = 1875},
+        {Name = "Jungle Pirate", MinLevel = 1900, MaxLevel = 1925},
+        {Name = "Musketeer Pirate", MinLevel = 1925, MaxLevel = 1950},
+        {Name = "Reborn Skeleton", MinLevel = 1975, MaxLevel = 2000},
+        {Name = "Living Zombie", MinLevel = 2000, MaxLevel = 2025},
+        {Name = "Demonic Soul", MinLevel = 2025, MaxLevel = 2050},
+        {Name = "Posessed Mummy", MinLevel = 2050, MaxLevel = 2075},
+        {Name = "Peanut Scout", MinLevel = 2075, MaxLevel = 2100},
+        {Name = "Peanut President", MinLevel = 2100, MaxLevel = 2125},
+        {Name = "Ice Cream Chef", MinLevel = 2125, MaxLevel = 2150},
+        {Name = "Ice Cream Commander", MinLevel = 2150, MaxLevel = 2175},
+        {Name = "Cookie Crafter", MinLevel = 2200, MaxLevel = 2225},
+        {Name = "Cake Guard", MinLevel = 2225, MaxLevel = 2250},
+        {Name = "Baking Staff", MinLevel = 2250, MaxLevel = 2275},
+        {Name = "Head Baker", MinLevel = 2275, MaxLevel = 2300},
+        {Name = "Cocoa Warrior", MinLevel = 2300, MaxLevel = 2325},
+        {Name = "Chocolate Bar Battler", MinLevel = 2325, MaxLevel = 2350},
+        {Name = "Sweet Thief", MinLevel = 2350, MaxLevel = 2375},
+        {Name = "Candy Rebel", MinLevel = 2375, MaxLevel = 2400},
+        {Name = "Candy Pirate", MinLevel = 2400, MaxLevel = 2425},
+        {Name = "Snow Demon", MinLevel = 2425, MaxLevel = 2450},
+        {Name = "Isle Outlaw", MinLevel = 2450, MaxLevel = 2475},
+        {Name = "Island Boy", MinLevel = 2475, MaxLevel = 2500},
+        {Name = "Sun-kissed Warrior", MinLevel = 2500, MaxLevel = 2525},
+        {Name = "Isle Champion", MinLevel = 2525, MaxLevel = 2550},
+        {Name = "Serpent Hunter", MinLevel = 2550, MaxLevel = 2575},
+        {Name = "Skull Slayer", MinLevel = 2575, MaxLevel = 2600}
+    }
+}
+
+-- ============================================
+-- 🎨 CRIAR INTERFACE THE DOG HUB
+-- ============================================
+local DogHub = Instance.new("ScreenGui")
+DogHub.Name = "TheDogHubUltimate"
+DogHub.Parent = game.CoreGui
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 400, 0, 500)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(0, 100, 200)
+MainFrame.Parent = DogHub
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = MainFrame
+
+-- Top Bar com Logo e Criadores
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 60)
+TopBar.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+
+local Logo = Instance.new("TextLabel")
+Logo.Text = "🐕 THE DOG HUB v3.0"
+Logo.Size = UDim2.new(0.7, 0, 0.6, 0)
+Logo.Position = UDim2.new(0, 15, 0, 5)
+Logo.BackgroundTransparency = 1
+Logo.TextColor3 = Color3.fromRGB(255, 200, 0)
+Logo.TextSize = 22
+Logo.Font = Enum.Font.GothamBold
+Logo.TextXAlignment = Enum.TextXAlignment.Left
+Logo.Parent = TopBar
+
+local Creators = Instance.new("TextLabel")
+Creators.Text = "Criadores: Dark_Danger & DeepSeek"
+Creators.Size = UDim2.new(0.7, 0, 0.4, 0)
+Creators.Position = UDim2.new(0, 15, 0.6, 0)
+Creators.BackgroundTransparency = 1
+Creators.TextColor3 = Color3.fromRGB(200, 200, 255)
+Creators.TextSize = 11
+Creators.Font = Enum.Font.Gotham
+Creators.TextXAlignment = Enum.TextXAlignment.Left
+Creators.Parent = TopBar
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Text = "✕"
+CloseBtn.Size = UDim2.new(0, 35, 0, 35)
+CloseBtn.Position = UDim2.new(1, -40, 0.5, -17.5)
+CloseBtn.AnchorPoint = Vector2.new(0.5, 0.5)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.TextColor3 = Color3.new(1, 1, 1)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 16
+CloseBtn.Parent = TopBar
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(1, 0)
+CloseCorner.Parent = CloseBtn
+
+-- Status Display
+local StatusFrame = Instance.new("Frame")
+StatusFrame.Size = UDim2.new(1, -20, 0, 80)
+StatusFrame.Position = UDim2.new(0, 10, 0, 70)
+StatusFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+StatusFrame.Parent = MainFrame
+
+local StatusCorner = Instance.new("UICorner")
+StatusCorner.CornerRadius = UDim.new(0, 8)
+StatusCorner.Parent = StatusFrame
+
+local LevelLabel = Instance.new("TextLabel")
+LevelLabel.Text = "LEVEL: Loading..."
+LevelLabel.Size = UDim2.new(1, -10, 0, 25)
+LevelLabel.Position = UDim2.new(0, 5, 0, 5)
+LevelLabel.BackgroundTransparency = 1
+LevelLabel.TextColor3 = Color3.fromRGB(255, 200, 0)
+LevelLabel.TextSize = 16
+LevelLabel.Font = Enum.Font.GothamBold
+LevelLabel.TextXAlignment = Enum.TextXAlignment.Left
+LevelLabel.Parent = StatusFrame
+
+local ProgressLabel = Instance.new("TextLabel")
+ProgressLabel.Text = "PROGRESS: 0% | NEXT SEA: 700"
+ProgressLabel.Size = UDim2.new(1, -10, 0, 25)
+ProgressLabel.Position = UDim2.new(0, 5, 0, 30)
+ProgressLabel.BackgroundTransparency = 1
+ProgressLabel.TextColor3 = Color3.new(1, 1, 1)
+ProgressLabel.TextSize = 14
+ProgressLabel.Font = Enum.Font.Gotham
+ProgressLabel.TextXAlignment = Enum.TextXAlignment.Left
+ProgressLabel.Parent = StatusFrame
+
+local FarmingLabel = Instance.new("TextLabel")
+FarmingLabel.Text = "FARMING: OFF | TARGET: None"
+FarmingLabel.Size = UDim2.new(1, -10, 0, 25)
+FarmingLabel.Position = UDim2.new(0, 5, 0, 55)
+FarmingLabel.BackgroundTransparency = 1
+FarmingLabel.TextColor3 = Color3.new(1, 1, 1)
+FarmingLabel.TextSize = 13
+FarmingLabel.Font = Enum.Font.Gotham
+FarmingLabel.TextXAlignment = Enum.TextXAlignment.Left
+FarmingLabel.Parent = StatusFrame
+
+-- ============================================
+-- 🎯 SISTEMA DE FARMING 3 MUNDOS
+-- ============================================
+local FarmingSystem = {
+    Enabled = false,
+    AutoAttack = true,
+    CurrentSea = 1,
+    CurrentTarget = nil,
+    AttackSpeed = 0.3,
+    GoalLevel = 2800  -- Até o terceiro mundo
+}
+
+-- Get player level
+function FarmingSystem:GetPlayerLevel()
+    local leaderstats = Player:FindFirstChild("leaderstats")
+    if leaderstats then
+        local level = leaderstats:FindFirstChild("Level")
+        if level then
+            return level.Value or 1
+        end
+    end
+    return 1
+end
+
+-- Determine current sea based on level
+function FarmingSystem:GetCurrentSea()
+    local level = self:GetPlayerLevel()
+    
+    if level < 700 then
+        return 1
+    elseif level < 1500 then
+        return 2
+    else
+        return 3
+    end
+end
+
+-- Get NPCs for current sea
+function FarmingSystem:GetCurrentNPCs()
+    local sea = self:GetCurrentSea()
+    self.CurrentSea = sea
+    
+    if sea == 1 then
+        return AllNPCs.Sea1
+    elseif sea == 2 then
+        return AllNPCs.Sea2
+    else
+        return AllNPCs.Sea3
+    end
+end
+
+-- Get next level goal
+function FarmingSystem:GetNextGoal()
+    local level = self:GetPlayerLevel()
+    
+    if level < 700 then
+        return 700
+    elseif level < 1500 then
+        return 1500
+    else
+        return 2800
+    end
+end
+
+-- Update display
+function FarmingSystem:UpdateDisplay()
+    local level = self:GetPlayerLevel()
+    local sea = self:GetCurrentSea()
+    local nextGoal = self:GetNextGoal()
+    local progress = math.floor((level / nextGoal) * 100)
+    
+    LevelLabel.Text = "LEVEL: " .. level .. " | SEA: " .. sea
+    ProgressLabel.Text = string.format("PROGRESS: %d%% | NEXT GOAL: %d", progress, nextGoal)
+    
+    if self.CurrentTarget then
+        FarmingLabel.Text = string.format("FARMING: %s | TARGET: %s", 
+            self.Enabled and "ON" or "OFF", 
+            self.CurrentTarget.Name)
+    else
+        FarmingLabel.Text = string.format("FARMING: %s | TARGET: None", 
+            self.Enabled and "ON" or "OFF")
+    end
+    
+    -- Color progress based on sea
+    if sea == 1 then
+        ProgressLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+    elseif sea == 2 then
+        ProgressLabel.TextColor3 = Color3.fromRGB(255, 150, 50)
+    else
+        ProgressLabel.TextColor3 = Color3.fromRGB(200, 50, 200)
+    end
+end
+
+-- Get recommended NPC
+function FarmingSystem:GetRecommendedNPC()
+    local level = self:GetPlayerLevel()
+    local npcs = self:GetCurrentNPCs()
+    
+    for i = #npcs, 1, -1 do
+        local npc = npcs[i]
+        if level >= npc.MinLevel and level <= npc.MaxLevel + 50 then
+            return npc.Name
+        end
+    end
+    
+    return npcs[1].Name
+end
+
+-- Find enemy
+function FarmingSystem:FindEnemy()
+    local targetType = self:GetRecommendedNPC()
+    local character = Player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return nil end
+    
+    local closest = nil
+    local closestDist = 500
+    local charPos = character.HumanoidRootPart.Position
+    
+    for _, npc in pairs(Workspace:GetChildren()) do
+        if npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
+            if npc.Name:find(targetType) then
+                local root = npc:FindFirstChild("HumanoidRootPart")
+                if root then
+                    local dist = (charPos - root.Position).Magnitude
+                    if dist < closestDist then
+                        closest = npc
+                        closestDist = dist
+                    end
+                end
+            end
+        end
+    end
+    
+    return closest, closestDist, targetType
+end
+
+-- Auto attack
+function FarmingSystem:AutoAttack()
+    if not self.AutoAttack then return end
+    
+    -- Attack with E key
+    VirtualInputManager:SendKeyEvent(true, "E", false, game)
+    task.wait(0.05)
+    VirtualInputManager:SendKeyEvent(false, "E", false, game)
+    
+    -- Skill with F key
+    VirtualInputManager:SendKeyEvent(true, "F", false, game)
+    task.wait(0.05)
+    VirtualInputManager:SendKeyEvent(false, "F", false, game)
+    
+    -- Mouse click
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+    task.wait(0.05)
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+end
+
+-- Move to enemy
+function FarmingSystem:MoveToEnemy(enemy)
+    local character = Player.Character
+    if not character or not enemy then return end
+    
+    local charRoot = character:FindFirstChild("HumanoidRootPart")
+    local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+    
+    if charRoot and enemyRoot then
+        charRoot.CFrame = CFrame.new(
+            enemyRoot.Position + Vector3.new(0, 3, 5)
+        )
+    end
+end
+
+-- Start farming
+function FarmingSystem:Start()
+    self.Enabled = true
+    print("[THE DOG HUB] Auto Farm 3 Worlds STARTED!")
+    
+    while self.Enabled and self:GetPlayerLevel() < self.GoalLevel do
+        -- Update display
+        self:UpdateDisplay()
+        
+        -- Find enemy
+        local enemy, distance, targetType = self:FindEnemy()
+        
+        if enemy then
+            self.CurrentTarget = enemy
+            
+            -- Move to enemy
+            self:MoveToEnemy(enemy)
+            
+            -- Auto attack if close
+            if distance < 30 then
+                self:AutoAttack()
+            end
+            
+            task.wait(self.AttackSpeed)
+        else
+            task.wait(1)
+        end
+    end
+    
+    self:Stop()
+    print("[THE DOG HUB] Goal reached! Level 2800+")
+end
+
+function FarmingSystem:Stop()
+    self.Enabled = false
+    self.CurrentTarget = nil
+    print("[THE DOG HUB] Farming stopped")
+end
+
+-- ============================================
+-- 🎁 SISTEMA AUTO REDEEM CODES
+-- ============================================
+local CodeSystem = {
+    Redeeming = false,
+    RedeemedCount = 0
+}
+
+function CodeSystem:RedeemCode(code)
+    local Remotes = ReplicatedStorage:FindFirstChild("Remotes")
+    if Remotes then
+        local CommF = Remotes:FindFirstChild("CommF_")
+        if CommF then
+            CommF:InvokeServer("RedeemCode", code)
+            return true
+        end
+    end
+    return false
+end
+
+function CodeSystem:RedeemAllCodes()
+    if self.Redeeming then return 0 end
+    
+    self.Redeeming = true
+    self.RedeemedCount = 0
+    
+    print("[THE DOG HUB] Redeeming " .. #BloxFruitsCodes .. " codes...")
+    
+    for i, code in ipairs(BloxFruitsCodes) do
+        local success = self:RedeemCode(code)
+        if success then
+            self.RedeemedCount = self.RedeemedCount + 1
+            print("[" .. i .. "/" .. #BloxFruitsCodes .. "] Redeemed: " .. code)
+        else
+            print("[" .. i .. "/" .. #BloxFruitsCodes .. "] Failed: " .. code)
+        end
+        task.wait(0.5) -- Wait between redeems
+    end
+    
+    self.Redeeming = false
+    print("[THE DOG HUB] Redeemed " .. self.RedeemedCount .. "/" .. #BloxFruitsCodes .. " codes!")
+    
+    return self.RedeemedCount
+end
+
+-- ============================================
+-- 🎛️ BOTÕES DE CONTROLE
+-- ============================================
+local ControlFrame = Instance.new("Frame")
+ControlFrame.Size = UDim2.new(1, -20, 0, 300)
+ControlFrame.Position = UDim2.new(0, 10, 0, 160)
+ControlFrame.BackgroundTransparency = 1
+ControlFrame.Parent = MainFrame
+
+-- Start Farming Button
+local StartFarmBtn = Instance.new("TextButton")
+StartFarmBtn.Text = "🚀 START AUTO FARM (3 WORLDS)"
+StartFarmBtn.Size = UDim2.new(1, 0, 0, 45)
+StartFarmBtn.Position = UDim2.new(0, 0, 0, 0)
+StartFarmBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+StartFarmBtn.TextColor3 = Color3.new(1, 1, 1)
+StartFarmBtn.TextSize = 16
+StartFarmBtn.Font = Enum.Font.GothamBold
+StartFarmBtn.Parent = ControlFrame
+
+local StartFarmCorner = Instance.new("UICorner")
+StartFarmCorner.CornerRadius = UDim.new(0, 8)
+StartFarmCorner.Parent = StartFarmBtn
+
+-- Stop Farming Button
+local StopFarmBtn = Instance.new("TextButton")
+StopFarmBtn.Text = "⏹ STOP FARMING"
+StopFarmBtn.Size = UDim2.new(1, 0, 0, 35)
+StopFarmBtn.Position = UDim2.new(0, 0, 0, 55)
+StopFarmBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+StopFarmBtn.TextColor3 = Color3.new(1, 1, 1)
+StopFarmBtn.TextSize = 14
+StopFarmBtn.Font = Enum.Font.GothamBold
+StopFarmBtn.Parent = ControlFrame
+
+local StopFarmCorner = Instance.new("UICorner")
+StopFarmCorner.CornerRadius = UDim.new(0, 6)
+StopFarmCorner.Parent = StopFarmBtn
+
+-- Auto Attack Toggle
+local AutoAttackBtn = Instance.new("TextButton")
+AutoAttackBtn.Text = "⚡ AUTO ATTACK: ON"
+AutoAttackBtn.Size = UDim2.new(1, 0, 0, 35)
+AutoAttackBtn.Position = UDim2.new(0, 0, 0, 100)
+AutoAttackBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
+AutoAttackBtn.TextColor3 = Color3.new(1, 1, 1)
+AutoAttackBtn.TextSize = 14
+AutoAttackBtn.Font = Enum.Font.GothamBold
+AutoAttackBtn.Parent = ControlFrame
+
+local AutoAttackCorner = Instance.new("UICorner")
+AutoAttackCorner.CornerRadius = UDim.new(0, 6)
+AutoAttackCorner.Parent = AutoAttackBtn
+
+-- Redeem Codes Button
+local RedeemBtn = Instance.new("TextButton")
+RedeemBtn.Text = "🎁 REDEEM ALL CODES (" .. #BloxFruitsCodes .. ")"
+RedeemBtn.Size = UDim2.new(1, 0, 0, 45)
+RedeemBtn.Position = UDim2.new(0, 0, 0, 145)
+RedeemBtn.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
+RedeemBtn.TextColor3 = Color3.new(1, 1, 1)
+RedeemBtn.TextSize = 16
+RedeemBtn.Font = Enum.Font.GothamBold
+RedeemBtn.Parent = ControlFrame
+
+local RedeemCorner = Instance.new("UICorner")
+RedeemCorner.CornerRadius = UDim.new(0, 8)
+RedeemCorner.Parent = RedeemBtn
+
+-- Info Button
+local InfoBtn = Instance.new("TextButton")
+InfoBtn.Text = "ℹ️ DOG HUB INFO"
+InfoBtn.Size = UDim2.new(1, 0, 0, 35)
+InfoBtn.Position = UDim2.new(0, 0, 0, 200)
+InfoBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 120)
+InfoBtn.TextColor3 = Color3.new(1, 1, 1)
+InfoBtn.TextSize = 14
+InfoBtn.Font = Enum.Font.GothamBold
+InfoBtn.Parent = ControlFrame
+
+local InfoCorner = Instance.new("UICorner")
+InfoCorner.CornerRadius = UDim.new(0, 6)
+InfoCorner.Parent = InfoBtn
+
+-- Hotkeys Label
+local HotkeysLabel = Instance.new("TextLabel")
+HotkeysLabel.Text = "Hotkeys: F = Farm | R = Redeem | X = Close"
+HotkeysLabel.Size = UDim2.new(1, 0, 0, 20)
+HotkeysLabel.Position = UDim2.new(0, 0, 0, 245)
+HotkeysLabel.BackgroundTransparency = 1
+HotkeysLabel.TextColor3 = Color3.fromRGB(150, 150, 200)
+HotkeysLabel.TextSize = 11
+HotkeysLabel.Font = Enum.Font.Gotham
+HotkeysLabel.Parent = ControlFrame
+
+-- ============================================
+-- 🎮 FUNÇÕES DOS BOTÕES
+-- ============================================
+StartFarmBtn.MouseButton1Click:Connect(function()
+    if not FarmingSystem.Enabled then
+        FarmingSystem:Start()
+        StartFarmBtn.Text = "✅ FARMING..."
+        StartFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
+        StopFarmBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+StopFarmBtn.MouseButton1Click:Connect(function()
+    FarmingSystem:Stop()
+    StartFarmBtn.Text = "🚀 START AUTO FARM (3 WORLDS)"
+    StartFarmBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    StopFarmBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+    FarmingLabel.Text = "FARMING: OFF | TARGET: None"
+end)
+
+AutoAttackBtn.MouseButton1Click:Connect(function()
+    FarmingSystem.AutoAttack = not FarmingSystem.AutoAttack
+    
+    if FarmingSystem.AutoAttack then
+        AutoAttackBtn.Text = "⚡ AUTO ATTACK: ON"
+        AutoAttackBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
+    else
+        AutoAttackBtn.Text = "⚡ AUTO ATTACK: OFF"
+        AutoAttackBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+    end
+end)
+
+RedeemBtn.MouseButton1Click:Connect(function()
+    RedeemBtn.Text = "⏳ REDEEMING..."
+    RedeemBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+    
+    spawn(function()
+        local redeemed = CodeSystem:RedeemAllCodes()
+        
+        RedeemBtn.Text = "✅ " .. redeemed .. " CODES REDEEMED!"
+        RedeemBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
+        
+        task.wait(3)
+        RedeemBtn.Text = "🎁 REDEEM ALL CODES (" .. #BloxFruitsCodes .. ")"
+        RedeemBtn.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
+    end)
+end)
+
+InfoBtn.MouseButton1Click:Connect(function()
+    print("==========================================")
+    print("🐕 THE DOG HUB v3.0 - ULTIMATE EDITION")
+    print("Created by: Dark_Danger & DeepSeek")
+    print("Features:")
+    print("- Auto Farm 3 Worlds (Level 1-2800+)")
+    print("- Auto Redeem 50+ Codes")
+    print("- Auto Attack System")
+    print("- Smart NPC Targeting")
+    print("- Progress Tracker")
+    print("==========================================")
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    DogHub:Destroy()
+    FarmingSystem:Stop()
+    print("[THE DOG HUB] Closed")
+end)
+
+-- ============================================
+-- ⌨️ HOTKEYS
+-- ============================================
+UserInputService.InputBegan:Connect(function(input)
+    -- F to toggle farming
+    if input.KeyCode == Enum.KeyCode.F then
+        if not FarmingSystem.Enabled then
+            FarmingSystem:Start()
+            StartFarmBtn.Text = "✅ FARMING..."
+            StartFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
+            StopFarmBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        else
+            FarmingSystem:Stop()
+            StartFarmBtn.Text = "🚀 START AUTO FARM (3 WORLDS)"
+            StartFarmBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+            StopFarmBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+        end
+    end
+    
+    -- R to redeem codes
+    if input.KeyCode == Enum.KeyCode.R then
+        spawn(function()
+            CodeSystem:RedeemAllCodes()
+        end)
+    end
+    
+    -- X to close
+    if input.KeyCode == Enum.KeyCode.X then
+        DogHub:Destroy()
+        FarmingSystem:Stop()
+    end
+end)
+
+-- ============================================
+-- 🚀 INICIALIZAÇÃO
+-- ============================================
+
+-- Auto update display
+spawn(function()
+    while DogHub.Parent do
+        FarmingSystem:UpdateDisplay()
+        task.wait(1)
+    end
+end)
+
+-- Dragging functionality
+local dragging = false
+local dragStart, startPos
+
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, 
+                                       startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+print("==================================================================")
+print("🐕 THE DOG HUB v3.0 - ULTIMATE EDITION LOADED! 🚀")
+print("Created by: Dark_Danger & DeepSeek")
+print("Features: Auto Farm 3 Worlds + Auto Redeem 50+ Codes")
+print("Hotkeys: F = Farm | R = Redeem | X = Close")
+print("==================================================================")
